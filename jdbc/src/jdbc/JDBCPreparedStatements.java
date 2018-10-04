@@ -2,12 +2,12 @@ package jdbc;
 
 import java.sql.*;
 
-public class JDBC {
+public class JDBCPreparedStatements {
 	
 	public static void main(String[] args) throws SQLException {
 		
 		Connection connection = null;
-		Statement statement = null;
+		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		
 		String URL = "jdbc:mysql://localhost:3306/demo?useSSL=false";
@@ -16,12 +16,11 @@ public class JDBC {
 		
 		try {
 			connection = DriverManager.getConnection(URL, user, password);
-			System.out.println("Connection success. \n");
-			
-			statement = connection.createStatement();
-			
-			resultSet = statement.executeQuery("SELECT * FROM employees");
-			
+			statement = connection
+					.prepareStatement("SELECT * FROM employees WHERE salary > ? and department=?");
+			statement.setDouble(1,10000);
+			statement.setString(2, "HR");
+			resultSet = statement.executeQuery();
 			while(resultSet.next()) {
 				System.out.println(resultSet.getString("last_name") + 
 						" " + resultSet.getString("first_name"));
