@@ -1,13 +1,12 @@
-package jdbc;
+package stored.procedures;
 
 import java.sql.*;
 
-public class JDBCPreparedStatements {
-	
-	public static void main(String[] args) throws SQLException {
-		
+public class StoredProceduresResultSet {
+
+	public static void main(String[] args) throws Exception {
 		Connection connection = null;
-		PreparedStatement statement = null;
+		CallableStatement statement = null;
 		ResultSet resultSet = null;
 		
 		String URL = "jdbc:mysql://localhost:3306/demo?useSSL=false";
@@ -16,11 +15,12 @@ public class JDBCPreparedStatements {
 		
 		try {
 			connection = DriverManager.getConnection(URL, user, password);
+			String department = "Engineering";
 			statement = connection
-					.prepareStatement("SELECT * FROM employees WHERE salary > ? and department=?");
-			statement.setDouble(1,10000);
-			statement.setString(2, "HR");
-			resultSet = statement.executeQuery();
+					.prepareCall("{call get_employees_for_department(?)}");
+			statement.setString(1, department);
+			statement.execute();
+			resultSet = statement.getResultSet();
 			display(resultSet);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -54,5 +54,5 @@ public class JDBCPreparedStatements {
 			connection.close();
 		}
 	}
-	
 }
+
