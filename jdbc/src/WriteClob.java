@@ -1,16 +1,19 @@
-package blob;
-
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
-import java.sql.*;
+import java.io.Reader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-public class WriteBlob {
+public class WriteClob {
 
 	public static void main(String[] args) throws Exception {
 		Connection connection = null;
 		PreparedStatement statement = null;
-		FileInputStream input = null;
+		FileReader input = null;
 		
 		String URL = "jdbc:mysql://localhost:3306/demo?useSSL=false";
 		String user = "student";
@@ -21,8 +24,8 @@ public class WriteBlob {
 			String sql = "update employees set resume=? where email='john.doe@foo.com'";
 			statement = connection.prepareStatement(sql);
 			
-			input = new FileInputStream(new File("resume.pdf"));
-			statement.setBinaryStream(1, input);
+			input = new FileReader(new File("resume.pdf"));
+			statement.setCharacterStream(1, input);
 			statement.executeUpdate();
 			System.out.println("\n Compleated succesfully!");
 		} catch(Exception e) {
@@ -44,10 +47,10 @@ public class WriteBlob {
 		}
 	}
 	
-	private static void close(FileInputStream input) throws IOException {
+	private static void close(FileReader input) throws IOException {
 		if(input != null) {
 			input.close();
 		}
 	}
-
+	
 }

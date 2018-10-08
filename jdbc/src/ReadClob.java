@@ -1,21 +1,20 @@
-package blob;
+
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.sql.*;
 
-public class ReadBlob {
+public class ReadClob {
 
 	public static void main(String[] args) throws Exception {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet resultSet = null;
 		
-		InputStream input = null;
-		FileOutputStream output = null;
+		Reader input = null;
+		FileWriter output = null;
 		
 		String URL = "jdbc:mysql://localhost:3306/demo?useSSL=false";
 		String user = "student";
@@ -27,15 +26,16 @@ public class ReadBlob {
 			String sql = "select resume from employees where email='john.doe@foo.com'";
 			resultSet = statement.executeQuery(sql);
 			
-			output = new FileOutputStream(new File("new_resume.pdf"));
+			output = new FileWriter(new File("new_resume_v2.pdf"));
 			
 			if(resultSet.next()) {
-				input = resultSet.getBinaryStream("resume");
+				input = resultSet.getCharacterStream("resume");
 				System.out.println("\n Reading resume from database.");
 				System.out.println(sql);
 				byte[] buffer = new byte[1024];
-				while(input.read(buffer) > 0) {
-					output.write(buffer);
+				int character;
+				while((character = input.read()) > 0) {
+					output.write(character);
 				}
 				System.out.println("\n Compleated succesfully!");
 			}
@@ -57,7 +57,7 @@ public class ReadBlob {
 			statement.close();
 		}
 	}
-	private static void close(InputStream input, FileOutputStream output) throws IOException {
+	private static void close(Reader input, FileWriter output) throws IOException {
 		
 		if(input != null) {
 			input.close();
